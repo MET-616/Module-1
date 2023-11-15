@@ -1,0 +1,146 @@
+---
+title: "Assignment_1"
+author: "JingjianGao"
+date: "2023-11-06"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Question 1
+
+##a
+```{r}
+site_A <- rnorm(100000,mean=200,sd=20)
+
+site_B <- rnorm(100000,mean=50,sd=10)
+
+site_C <- rnorm(100000,mean=100,sd=15)
+
+site_D <- rnorm(100000,mean=150,sd=30)
+
+site_E <- rnorm(100000,mean=100,sd=30)
+
+site_F <- rnorm(100000,mean=100,sd=10)
+
+total_call_center_demand <- site_A+site_B+site_C+site_D+site_E+site_F
+
+total_call_center_demand_mean <- mean(total_call_center_demand)
+total_call_center_demand_sd <- sd(total_call_center_demand)
+
+total_call_center_demand_mean
+# The total call center demand mean is 699.9748
+total_call_center_demand_sd
+# The total call center demand standard deviation is 51.24098
+
+```
+
+##b 
+```{r }
+hist(total_call_center_demand)
+
+```
+
+# Question 2
+
+##a
+```{r}
+set.seed(114)
+n <- 100000
+battery_life_mean <- 7
+battery_life_sd <- 2
+refund_start <- 10
+refund_extra <- 1.50
+
+refund_amounts <- numeric(n)
+refund_paid <- numeric(n)
+
+for (i in 1:n) {
+  battery_life <- rnorm(1, battery_life_mean, battery_life_sd)
+  
+  refund_months <- max(0, 5 * 12 - round(battery_life * 12))
+  refund_amount <- refund_start + refund_extra * refund_months
+  
+  refund_amounts[i] <- refund_amount
+  refund_paid[i] <- refund_months > 0
+}
+
+expected_cost_per_cellphone <- sum(refund_amounts) / n
+expected_cost_per_cellphone
+
+# The expected cost per cellphone is about $12.99
+```
+##b
+
+```{r}
+probability_refund_paid <- mean(refund_paid)
+probability_refund_paid
+
+# The Probability a refund will be paid is about 15.4%
+
+```
+
+
+##c
+```{r}
+average_cost_per_refund <- mean(refund_amounts[refund_paid == 1])
+average_cost_per_refund
+
+# The average cost per refund is about $29.41
+```
+
+# Question 3
+
+##a
+```{r}
+set.seed(99)
+
+demand_mean <- 125
+demand_sd <- 35
+coffee_cost_per_serving <- 0.50
+cup_cost_per_serving <- 0.15
+retail_price_per_serving <- 2.75
+municipal_license_cost = 100
+hours_open = 3
+
+n <- 100000
+servings_options <- c(75, 100, 120, 140, 160, 180)
+expected_profits <- numeric(length(servings_options))
+
+for (i in 1:length(servings_options)) {
+  servings <- servings_options[i]
+  daily_profits <- numeric()
+  
+  for (j in 1:n) {
+    demand <- rnorm(1, demand_mean, demand_sd)
+    servings_to_prepare <- min(servings, demand)
+
+    daily_profit <- (servings_to_prepare * (2.1)) - municipal_license_cost
+    daily_profits[j] <- daily_profit
+  }
+
+  expected_profits[i] <- mean(daily_profits)
+  
+  cat("Expected profit for preparing", servings, "servings: $", expected_profits[i], "\n")
+}
+
+```
+
+
+##b
+```{r}
+
+highest_profit_option <- servings_options[which.max(expected_profits)]
+cat("The option with the highest expected profit is preparing", highest_profit_option, "servings.\n")
+
+
+highest_profits <- subset(daily_profits, servings == highest_profit_option)
+hist(highest_profits, main = paste("Risk Profile of Profit for", highest_profit_option, "Servings"), xlab = "Profit")
+```
+
+
+
